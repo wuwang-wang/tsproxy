@@ -48,12 +48,11 @@ last_client_disconnected = None
 REMOVE_TCP_OVERHEAD = 1460.0 / 1500.0
 lock = threading.Lock()
 background_activity_count = 0
-current_time = time.clock if sys.platform == "win32" else time.time
-try:
-  import monotonic
-  current_time = monotonic.monotonic
-except Exception:
-  pass
+if (sys.version_info >= (3,0)):
+    from time import monotonic
+else:
+    from monotonic import monotonic
+current_time = monotonic
 
 
 def PrintMessage(msg):
@@ -704,7 +703,9 @@ def main():
 
   # Set up logging
   log_level = logging.CRITICAL
-  if options.verbose == 1:
+  if not options.verbose:
+    pass
+  elif options.verbose == 1:
     log_level = logging.ERROR
   elif options.verbose == 2:
     log_level = logging.WARNING
